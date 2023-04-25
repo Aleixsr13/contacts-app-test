@@ -1,20 +1,20 @@
-import "./index.css";
-import React, { useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
+import './index.css'
+import React, { useEffect, useState } from 'react'
+import { v4 as uuidv4 } from 'uuid'
 import {
   getAllPersons,
   createPerson,
   deletePerson,
   updatePerson,
-} from "./services/persons";
+} from './services/persons'
 
 const Filter = ({ handleSearchChange, searchName }) => {
   return (
     <div>
       Search by name: <input onChange={handleSearchChange} value={searchName} />
     </div>
-  );
-};
+  )
+}
 
 const PersonForm = ({
   handleSubmit,
@@ -35,8 +35,8 @@ const PersonForm = ({
         <button type="submit">add</button>
       </div>
     </form>
-  );
-};
+  )
+}
 
 const Persons = ({ persons, searchName, handleDelete }) => {
   return (
@@ -54,49 +54,49 @@ const Persons = ({ persons, searchName, handleDelete }) => {
           </li>
         ))}
     </ul>
-  );
-};
+  )
+}
 
 const SuccessNotification = ({ sucessMessage }) => {
   if (sucessMessage === null) {
-    return null;
+    return null
   }
 
-  return <div className="sucessMessage">{sucessMessage}</div>;
-};
+  return <div className="sucessMessage">{sucessMessage}</div>
+}
 
 const ErrorNotification = ({ errorMessage }) => {
   if (errorMessage === null) {
-    return null;
+    return null
   }
 
-  return <div className="errorMessage">{errorMessage}</div>;
-};
+  return <div className="errorMessage">{errorMessage}</div>
+}
 
 const App = () => {
-  const [persons, setPersons] = useState([]);
-  const [newName, setNewName] = useState("");
-  const [newNumber, setNewNumber] = useState("");
-  const [searchName, setSearchName] = useState("");
-  const [successMessage, setSuccesMessage] = useState(null);
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [persons, setPersons] = useState([])
+  const [newName, setNewName] = useState('')
+  const [newNumber, setNewNumber] = useState('')
+  const [searchName, setSearchName] = useState('')
+  const [successMessage, setSuccesMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
     getAllPersons().then((persons) => {
-      setPersons(persons);
-    });
-  }, []);
+      setPersons(persons)
+    })
+  }, [])
 
   const handleSubmit = (event) => {
-    event.preventDefault();
+    event.preventDefault()
 
     const personToAddToState = {
       id: uuidv4(),
       name: newName,
       number: newNumber,
-    };
+    }
 
-    const personExists = persons.find((person) => person.name === newName);
+    const personExists = persons.find((person) => person.name === newName)
 
     if (personExists) {
       if (
@@ -104,7 +104,7 @@ const App = () => {
           `${newName} is already added to phonebook, replace the older number with a new one?`
         )
       ) {
-        const updatedPerson = { ...personExists, number: newNumber };
+        const updatedPerson = { ...personExists, number: newNumber }
 
         updatePerson(updatedPerson)
           .then((updatedPerson) => {
@@ -112,59 +112,59 @@ const App = () => {
               prevPersons.map((person) =>
                 person.id === updatedPerson.id ? updatedPerson : person
               )
-            );
-            setSuccesMessage(`${personExists.name} number succesfully updated`);
+            )
+            setSuccesMessage(`${personExists.name} number succesfully updated`)
             setTimeout(() => {
-              setSuccesMessage(null);
-            }, 5000);
+              setSuccesMessage(null)
+            }, 5000)
           })
           .catch((error) => {
             setErrorMessage(
               `Information of ${personExists.name} has already beend removed from the server`
-            );
-          });
+            )
+          })
         setTimeout(() => {
-          setErrorMessage(null);
-        }, 5000);
+          setErrorMessage(null)
+        }, 5000)
       } else {
-        return;
+        return
       }
     } else {
       createPerson(personToAddToState).then((newPerson) => {
-        setPersons((prevPersons) => [...prevPersons, newPerson]);
-        setSuccesMessage(`Added ${newPerson.name}`);
-      });
+        setPersons((prevPersons) => [...prevPersons, newPerson])
+        setSuccesMessage(`Added ${newPerson.name}`)
+      })
       setTimeout(() => {
-        setSuccesMessage(null);
-      }, 5000);
+        setSuccesMessage(null)
+      }, 5000)
     }
 
-    setNewName("");
-    setNewNumber("");
-  };
+    setNewName('')
+    setNewNumber('')
+  }
 
   const handleNameChange = (event) => {
-    setNewName(event.target.value);
-  };
+    setNewName(event.target.value)
+  }
   const handleNumberChange = (event) => {
-    setNewNumber(event.target.value);
-  };
+    setNewNumber(event.target.value)
+  }
 
   const handleSearchChange = (event) => {
-    setSearchName(event.target.value);
-  };
+    setSearchName(event.target.value)
+  }
 
   const handleDelete = (id, name) => {
     if (window.confirm(`Are you sure you want to delete ${name}`)) {
       deletePerson({ id }).then(() => {
         setPersons((prevPersons) =>
           prevPersons.filter((person) => person.id !== id)
-        );
-      });
+        )
+      })
     } else {
-      setPersons((prevPersons) => prevPersons);
+      setPersons((prevPersons) => prevPersons)
     }
-  };
+  }
 
   return (
     <div>
@@ -187,7 +187,7 @@ const App = () => {
         handleDelete={handleDelete}
       />
     </div>
-  );
-};
+  )
+}
 
-export default App;
+export default App
